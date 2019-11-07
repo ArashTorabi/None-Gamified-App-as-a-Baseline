@@ -133,8 +133,7 @@ public class BLEBridge extends AppCompatActivity {
         Long currentTimestamp = System.currentTimeMillis();
         int minBackDifference = 300;
         if ((currentTimestamp - lastTimestamp) > minBackDifference) {
-            Snackbar.make(findViewById(R.id.blebridge_content), "Tap twice and fast to exit",
-                    Snackbar.LENGTH_LONG).setAction("Action", null).show();
+            Toast.makeText(this, "Tap twice and fast to exit", Toast.LENGTH_SHORT).show();
             lastTimestamp = currentTimestamp;
             return;
         }
@@ -404,7 +403,7 @@ public class BLEBridge extends AppCompatActivity {
             if (BLEService.BROADCAST_BLESERVICE_FIRST_CONNECT.equals(action)) {
                 shouldTimeout = false;
 
-                // start BLEBridgeHandler Fragment
+                // start BLEBridgeHandler Fragment then Start the Game in BLEBridgeHandler!
                 ArrayList<String> deviceAddress = new ArrayList<>();
                 for (BluetoothDevice device : devices) {
                     deviceAddress.add(device.getAddress());
