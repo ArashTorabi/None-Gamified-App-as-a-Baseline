@@ -38,11 +38,12 @@
 
     <string name="blebridge_pref_frosturl_key">blebridge_pref_frosturl_key</string>
     <string name="blebridge_pref_frosturl_title">SensorThings Server URL</string>
-    <string name="blebridge_pref_frosturl_default">http://smartaqnet.teco.edu:8080/FROST-Server</string>
+    <!--    <string name="blebridge_pref_frosturl_default">http://smartaqnet.teco.edu:8080/FROST-Server</string>-->
+    <string name="blebridge_pref_frosturl_default">http://smartaqnet-dev.dmz.teco.edu</string>
 
     <string name="blebridge_pref_thing_id_key">blebridge_pref_thingid_key</string>
     <string name="blebridge_pref_thing_id_title">Thing ID</string>
-    <string name="blebridge_pref_thing_id_default">testthing</string>
+    <string name="blebridge_pref_thing_id_default">Duster_0</string>
 
     <string name="blebridge_pref_pm_datastream_id_key">blebridge_pref_datastreamid_key</string>
     <string name="blebridge_pref_pm_datastream_id_title">PM Datastream ID</string>
