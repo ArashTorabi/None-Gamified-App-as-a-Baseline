@@ -10,6 +10,8 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
 import android.widget.Toast;
 
 import java.util.Timer;
@@ -24,50 +26,44 @@ import edu.teco.dustradarnonegame.http.HTTPService;
 
 import static edu.teco.dustradarnonegame.blebridge.BLEBridgeHandler.*;
 
-public class GameStartActivity extends AppCompatActivity {
+public class RecordingActivity extends AppCompatActivity {
     
-    private GameView myGameView;
-    private Handler handler = new Handler();
-    private final  static long Interval = 32;
+    private Button stopRecordind;
     boolean doubleBackToExitPressedOnce = false;
     private String deviceAddress;
-    private String lastData = null;
     
     
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_recorcing);
     
         deviceAddress = getIntent().getExtras().getString(DataService.EXTRA_DATASERVICE_ADDRESS);
         Intent startRecordingIntent = new Intent(DataService.BROADCAST_DATASERVICE_START_RECORDING);
         startRecordingIntent.putExtra(DataService.EXTRA_DATASERVICE_ADDRESS, deviceAddress);
-        GameStartActivity.this.sendBroadcast(startRecordingIntent);
+        RecordingActivity.this.sendBroadcast(startRecordingIntent);
     
         Intent startTransmitIntent = new Intent(HTTPService.BROADCAST_HTTPSERVICE_START_TRANSMIT);
         startTransmitIntent.putExtra(DataService.EXTRA_DATASERVICE_ADDRESS, deviceAddress);
-        GameStartActivity.this.sendBroadcast(startTransmitIntent);
+        RecordingActivity.this.sendBroadcast(startTransmitIntent);
+    
+        stopRecordind = (Button) findViewById(R.id.stop_recording_btn);
         
-        myGameView = new GameView(this);
-        setContentView(myGameView);
-        
-        Timer timer = new Timer();
-        timer.schedule(new TimerTask() {
+        stopRecordind.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void run() {
-                handler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        myGameView.invalidate();
-                    }
-                });
+            public void onClick(View view) {
+                stopServices();
+                onDoubleBack();
+                //finish();
+               // System.exit(0);
             }
-        }, 0,Interval);
+        });
         
     }
     
     @Override
     public void onBackPressed() {
-        Log.i("GameActivity", "GameStartActivity: onBackPressed()");
+        Log.i("GameActivity", "RecordingActivity: onBackPressed()");
         
   
         if (doubleBackToExitPressedOnce) {
@@ -96,11 +92,11 @@ public class GameStartActivity extends AppCompatActivity {
         
         Intent stopRecordingIntent = new Intent(DataService.BROADCAST_DATASERVICE_STOP_RECORDING);
         stopRecordingIntent.putExtra(DataService.EXTRA_DATASERVICE_ADDRESS, deviceAddress);
-        GameStartActivity.this.getApplicationContext().sendBroadcast(stopRecordingIntent);
+        RecordingActivity.this.getApplicationContext().sendBroadcast(stopRecordingIntent);
     
         Intent stopTransmitIntent = new Intent(HTTPService.BROADCAST_HTTPSERVICE_STOP_TRANSMIT);
         stopTransmitIntent.putExtra(DataService.EXTRA_DATASERVICE_ADDRESS, deviceAddress);
-        GameStartActivity.this.getApplicationContext().sendBroadcast(stopTransmitIntent);
+        RecordingActivity.this.getApplicationContext().sendBroadcast(stopTransmitIntent);
         super.onPause();
     }
     
@@ -111,48 +107,21 @@ public class GameStartActivity extends AppCompatActivity {
         Log.i(deviceAddress, "onResume");
     
         registerHandlerReceiver();
-    
-    
+        
         Intent startRecordingIntent = new Intent(DataService.BROADCAST_DATASERVICE_START_RECORDING);
         startRecordingIntent.putExtra(DataService.EXTRA_DATASERVICE_ADDRESS, deviceAddress);
-        GameStartActivity.this.sendBroadcast(startRecordingIntent);
+        RecordingActivity.this.sendBroadcast(startRecordingIntent);
     
         Intent startTransmitIntent = new Intent(HTTPService.BROADCAST_HTTPSERVICE_START_TRANSMIT);
         startTransmitIntent.putExtra(DataService.EXTRA_DATASERVICE_ADDRESS, deviceAddress);
-        GameStartActivity.this.sendBroadcast(startTransmitIntent);
+        RecordingActivity.this.sendBroadcast(startTransmitIntent);
     }
     
-    public void onGameOver(){
-        compareScore();
-        Intent gameOverIntent = new Intent(getApplicationContext(),GameOverActivity.class);
-        gameOverIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        gameOverIntent.putExtra("score",myGameView.getScore());
-        getApplicationContext().startActivity(gameOverIntent);
-    }
     public void onDoubleBack(){
-        Intent gameResetIntent = new Intent(getApplicationContext(), IntroMainActivity.class);
-        gameResetIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        getApplicationContext().startActivity(gameResetIntent);
+        Intent resetIntent = new Intent(getApplicationContext(), IntroMainActivity.class);
+        resetIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        getApplicationContext().startActivity(resetIntent);
     }
-    
-    public int readHighScore() {
-        SharedPreferences pref = getSharedPreferences("GAMEHIGHSCORE", Context.MODE_PRIVATE);
-        return pref.getInt("HIGHSCORE", 0);
-    }
-    
-    public void writeHighScore(int highScore) {
-        SharedPreferences highScorePref = getSharedPreferences("GAMEHIGHSCORE", Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = highScorePref.edit();
-        editor.putInt("HIGHSCORE", highScore);
-        editor.commit();
-    }
-    
-    public void compareScore() {
-        if (myGameView.getScore() > readHighScore()) {
-            writeHighScore(myGameView.getScore());
-        }
-    }
-    
     
     private void stopServices() {
         KeepAliveManager.stopService(this);
@@ -164,7 +133,7 @@ public class GameStartActivity extends AppCompatActivity {
         isTransmitting = false;
     }
     
-    // BroadcastReceivers
+    // BroadcastReceivers // not used in none-gamified version
     
     private final BroadcastReceiver mHandlerReceiver = (new BroadcastReceiver() {
         
@@ -180,7 +149,7 @@ public class GameStartActivity extends AppCompatActivity {
             if (BLEService.BROADCAST_BLESERVICE_DATA_AVAILABLE.equals(action)) {
                 String address = intent.getStringExtra(BLEService.EXTRA_BLESERVICE_ADDRESS);
                 if (deviceAddress.equals(address)) {
-                    lastData = intent.getStringExtra(BLEService.EXTRA_BLESERVICE_DATA);
+                    //lastData = intent.getStringExtra(BLEService.EXTRA_BLESERVICE_DATA);
                     //bleConnectionStatus = "Connected";
                     //updateView();
                 }
@@ -241,12 +210,12 @@ public class GameStartActivity extends AppCompatActivity {
         filter.addAction(HTTPService.BROADCAST_HTTPSERVICE_TIMEOUT);
         filter.addAction(HTTPService.BROADCAST_HTTPSERVICE_NOTHING_TO_TRANSMIT);
     
-        GameStartActivity.this.registerReceiver(mHandlerReceiver, filter);
+        RecordingActivity.this.registerReceiver(mHandlerReceiver, filter);
     }
     
     private void unregisterHandlerReceiver() {
         try {
-            GameStartActivity.this.unregisterReceiver(mHandlerReceiver);
+            RecordingActivity.this.unregisterReceiver(mHandlerReceiver);
         }
         catch (IllegalArgumentException e) {
             e.printStackTrace();

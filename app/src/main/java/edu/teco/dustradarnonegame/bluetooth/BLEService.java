@@ -65,9 +65,6 @@ public class BLEService extends Service {
     public final static UUID METADATA_CHARACTERISTIC_UUID =
             UUID.fromString("0933fb51-155f-4f17-98c6-3a9663f51a3c");
     
-    public final static UUID BUTTON_NOTIFY_CHARACTERISTIC_UUID =
-            UUID.fromString("2b2d5a29-eec8-4155-8261-2d75774aab49");
-
     private final static List<UUID> requiredServiceUUIDs = Arrays.asList(
             DATA_SERVICE_UUID,
             METADATA_SERVICE_UUID
@@ -90,7 +87,6 @@ public class BLEService extends Service {
     public final static String BROADCAST_BLESERVICE_METADATA_AVAILABLE = "BROADCAST_BLESERVICE_METADATA_AVAILABLE";
     public final static String EXTRA_BLESERVICE_DATA = "EXTRA_BLESERVICE_DATA";
     public final static String EXTRA_BLESERVICE_ADDRESS = "EXTRA_BLESERVICE_ADDRESS";
-    public static boolean buttonPress;
     // private members
     ArrayList<String> deviceAddress = new ArrayList<>();
     private boolean shouldReconnect = false;
@@ -419,7 +415,6 @@ public class BLEService extends Service {
                         DataChar.put(gatt.getDevice().getAddress(), dataservice.getCharacteristic(DATA_CHARACTERISTIC_UUID));
                         DataDescriptionChar.put(gatt.getDevice().getAddress(), dataservice.getCharacteristic(DATADESCRIPTION_CHARACTERISTIC_UUID));
                         MetadataChar.put(gatt.getDevice().getAddress(), metadataservice.getCharacteristic(METADATA_CHARACTERISTIC_UUID));
-                        buttonNotifyChar.put(gatt.getDevice().getAddress(), dataservice.getCharacteristic(BUTTON_NOTIFY_CHARACTERISTIC_UUID));
                         broadcastUpdate(BROADCAST_BLESERVICE_GATT_SERVICES_DISCOVERED, gatt.getDevice().getAddress());
                         Log.i(TAG, "device " + gatt.getDevice().getAddress() + " connected");
 
@@ -442,7 +437,6 @@ public class BLEService extends Service {
 
         @Override
         public void onCharacteristicChanged(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic) {
-            readCharacteristic(gatt, buttonNotifyChar.get(gatt.getDevice().getAddress()));
             if (NotifyChar.containsValue(characteristic)) {
                 if (CharFIFO.size() > maxCharFIFOsize) {
                     Log.w(TAG, "CharFIFO has been cleared.");
@@ -459,13 +453,6 @@ public class BLEService extends Service {
         @Override
         public void onCharacteristicRead(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic, int status) {
             if (status == BluetoothGatt.GATT_SUCCESS) {
-                if (buttonNotifyChar.containsValue(characteristic)) {
-                    String data = characteristic.getStringValue(0);
-                    if (data.equals("down")){
-                        buttonPress = true;
-                    }
-                    return;
-                }
                 if (DataChar.containsValue(characteristic)) {
                     String data = characteristic.getStringValue(0);
                     broadcastUpdate(BROADCAST_BLESERVICE_DATA_AVAILABLE, gatt.getDevice().getAddress(), data);

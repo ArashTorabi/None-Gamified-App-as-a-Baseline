@@ -27,30 +27,13 @@
         android:largeHeap="true"
         android:supportsRtl="true"
         android:theme="@style/AppTheme.NoActionBar">
-        <activity android:name="edu.teco.dustradarnonegame.GameOverActivity"></activity>
-        <activity android:name="edu.teco.dustradarnonegame.GameStartActivity" />
-        <activity android:name="edu.teco.dustradarnonegame.GameView" />
+        <activity android:name="edu.teco.dustradarnonegame.RecordingActivity" />
         <activity android:name="edu.teco.dustradarnonegame.IntroMainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        </activity>
-        <activity
-            android:name="edu.teco.dustradarnonegame.MainActivity"
-            android:configChanges="orientation|keyboardHidden"
-            android:label="@string/app_name"
-            android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar">
-
-            <!--
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-            -->
         </activity>
         <activity
             android:name="edu.teco.dustradarnonegame.blebridge.BLEBridge"

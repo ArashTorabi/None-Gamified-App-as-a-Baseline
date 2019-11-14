@@ -3,7 +3,7 @@ package edu.teco.dustradarnonegame.blebridge;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import edu.teco.dustradarnonegame.GameStartActivity;
+import edu.teco.dustradarnonegame.RecordingActivity;
 import edu.teco.dustradarnonegame.data.DataService;
 
 
@@ -47,7 +47,7 @@ public class BLEBridgeHandler extends Fragment {
             deviceAddress = getArguments().getString(ARG_DEVICEADDRESS);
         }
         //Start Game
-        Intent gameIntent = new Intent(BLEBridgeHandler.this.getActivity(), GameStartActivity.class);
+        Intent gameIntent = new Intent(BLEBridgeHandler.this.getActivity(), RecordingActivity.class);
         gameIntent.putExtra(DataService.EXTRA_DATASERVICE_ADDRESS,deviceAddress);
         BLEBridgeHandler.this.getActivity().startActivity(gameIntent);
     }
