@@ -6,16 +6,12 @@ import android.support.v7.app.AppCompatActivity;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
-
-import java.util.Timer;
-import java.util.TimerTask;
 
 import edu.teco.dustradarnonegame.blebridge.KeepAliveManager;
 import edu.teco.dustradarnonegame.bluetooth.BLEService;
@@ -36,7 +32,7 @@ public class RecordingActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_recorcing);
+        setContentView(R.layout.activity_recording);
     
         deviceAddress = getIntent().getExtras().getString(DataService.EXTRA_DATASERVICE_ADDRESS);
         Intent startRecordingIntent = new Intent(DataService.BROADCAST_DATASERVICE_START_RECORDING);

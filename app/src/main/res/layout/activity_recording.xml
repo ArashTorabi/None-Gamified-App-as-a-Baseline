@@ -11,7 +11,7 @@
         android:layout_width="235dp"
         android:layout_height="55dp"
         android:width="@android:dimen/app_icon_size"
-        android:text="Stop Reording and Exit!"
+        android:text="Stop Recording and Exit!"
         android:textAllCaps="false"
         android:textSize="18dp"
         app:layout_constraintBottom_toBottomOf="parent"
